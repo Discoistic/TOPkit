@@ -1,26 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-
-class masterwindow:
-    '''
-    Creates the basic window and frame to fit standard information in.
-    Should only be used for settings used everywhere.
-    '''
-    def __init__(self, root_var):
-        # Set the default window options
-        self.root_var = root_var
-        self.root_var.iconbitmap(r'icon.ico')  # Dit werkt niet
-        self.root_var.geometry("500x150")
-        self.root_var.lift()
-
-        # Create a consistent header everywhere
-        self.header_frame = tk.Frame(root_var)
-        self.header_frame.pack()
-
-        header = tk.Label(self.header_frame,
-                          text="Do not share with clients!",
-                          font="impact")
-        header.pack()
 #    _______          _          _
 #   |__   __|        | |        | |
 #      | | ___  _ __ | |__   ___| |_ __
@@ -29,13 +8,23 @@ class masterwindow:
 #      |_|\___/| .__/|_| |_|\___|_| .__/
 #              | |                | |
 #              |_|                |_|
-class tophelp_window(masterwindow):
+class tophelp_window:
     '''
     Creates the TOPhelp screen and URL changer functionality. Requires a direct definition of the root/master window.
     '''
     def __init__(self, root_var):
-        super().__init__(root_var)
         self.root_var = root_var
+        self.root_var = root_var
+        self.root_var.iconbitmap(r'icon.ico')  # Dit werkt niet
+        self.root_var.geometry("150x150")
+        self.root_var.lift()
+        # Create a consistent header everywhere
+        self.header_frame = tk.Frame(root_var)
+        self.header_frame.pack()
+
+        header = tk.Label(self.header_frame,
+                          text="Link changer", font="impact")
+        header.pack()
 
         self.frame = tk.Frame(root_var)
         self.frame.pack()
