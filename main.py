@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import ctypes
+from tophelp import *
 #    _____             _
 #   |  __ \           | |
 #   | |__) |___   ___ | |_
@@ -45,7 +46,7 @@ class MainMenu(masterwindow):
 
         self.root_var.title("MerijnA's TOPkit")
 
-        self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk", command=lambda: new_window())
+        self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk", command=self.new_window)
         self.quitbutton = tk.Button(self.frame, text="Quit this tool", command=root_var.destroy)
 
         self.btn_tophelp.pack()
@@ -54,48 +55,6 @@ class MainMenu(masterwindow):
     def new_window(self):
         self.new_root = tk.Toplevel(self.root_var)
         app = tophelp_window(self.new_root)
-#    _______          _          _
-#   |__   __|        | |        | |
-#      | | ___  _ __ | |__   ___| |_ __
-#      | |/ _ \| '_ \| '_ \ / _ \ | '_ \
-#      | | (_) | |_) | | | |  __/ | |_) |
-#      |_|\___/| .__/|_| |_|\___|_| .__/
-#              | |                | |
-#              |_|                |_|
-class tophelp_window(masterwindow):
-    '''
-    Creates the TOPhelp screen and URL changer functionality. Requires a direct definition of the root/master window.
-    '''
-    def __init__(self, root_var):
-        super().__init__(root_var)
-        self.root_var = root_var
-
-        self.frame = tk.Frame(root_var)
-        self.frame.pack()
-
-        self.root_var.title("TOPhelp link changer")
-
-        changer = tk.Button(self.root_var, text="Click to change url", command=self._urlchanger)
-        changer_explanation = tk.Message(self.root_var, text="Reads last clipboard entry and if TOPhelp URL, changes to MyTOPdesk", )
-
-        changer.pack()
-        changer_explanation.pack()
-
-    def _urlchanger(self):
-        '''Change TOPhelp URL to My TOPdesk URL'''
-        # First get the clipboard content
-        # Gets a TOPhelp URL, such as https://tophelp.topdesk.com/tas/public/ssp/content/detail/knowledgeitem?unid=513caaea948e4b8a9e567c9ebbce60b4
-        clipboard = self.root_var.clipboard_get()
-
-        # check for it being a KI hotlink
-        if "https://tophelp.topdesk.com/" in clipboard and len(clipboard) < 150:
-            mytopdeskurl = clipboard.replace("https://tophelp.topdesk.com/", "https://my.topdesk.com/")
-            self.root_var.clipboard_clear()
-            self.root_var.clipboard_append(mytopdeskurl)
-        else:
-            messagebox.showerror(title="Not a (valid) TOPhelp URL", message="To make this work, the URL must at least contain https://tophelp.topdesk.com/ and be less than 150 chars long. Please try again.")
-            self.root_var.lift()
-
 #                 _   _                _____
 #       /\       | | (_)              / ____|
 #      /  \   ___| |_ _  ___  _ __   | (___   ___  __ _ _   _  ___ _ __   ___ ___
