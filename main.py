@@ -1,6 +1,7 @@
 # Start with importing all necessary stuff
 import tkinter as tk
 from tkinter import messagebox
+import ctypes
 #    _____             _
 #   |  __ \           | |
 #   | |__) |___   ___ | |_
@@ -28,7 +29,7 @@ class masterwindow:
                           text="Do not share with clients!",
                           font="impact")
         header.pack()
-    
+
 
 
 class MainMenu(masterwindow):
@@ -95,20 +96,20 @@ class tophelp_window(masterwindow):
             messagebox.showerror(title="Not a (valid) TOPhelp URL", message="To make this work, the URL must at least contain https://tophelp.topdesk.com/ and be less than 150 chars long. Please try again.")
             self.root_var.lift()
 
-#                 _   _                _____                                      
-#       /\       | | (_)              / ____|                                     
-#      /  \   ___| |_ _  ___  _ __   | (___   ___  __ _ _   _  ___ _ __   ___ ___ 
+#                 _   _                _____
+#       /\       | | (_)              / ____|
+#      /  \   ___| |_ _  ___  _ __   | (___   ___  __ _ _   _  ___ _ __   ___ ___
 #     / /\ \ / __| __| |/ _ \| '_ \   \___ \ / _ \/ _` | | | |/ _ \ '_ \ / __/ _ \
 #    / ____ \ (__| |_| | (_) | | | |  ____) |  __/ (_| | |_| |  __/ | | | (_|  __/
 #   /_/    \_\___|\__|_|\___/|_| |_| |_____/ \___|\__, |\__,_|\___|_| |_|\___\___|
-#                                                    | |                          
-#                                                    |_|                          
+#                                                    | |
+#                                                    |_|
 class actionsequence():
     def __init__(self, formatversion="2.6", export=832217040,  ):
         self.formatversion = formatversion
         self.export = export
-    
-    
+
+
 
 class as_variable:
     '''
@@ -139,7 +140,7 @@ class as_variable:
         self.name = name
         self.value = value
 
-    #Spit out variable in json style with necessary checks  
+    #Spit out variable in json style with necessary checks
     def to_json(self):
         if isinstance(self.name, str) and isinstance(self.name, str):
             return '{\n\t"name": "'+self.name+'",\n\t"value": "'+self.value+'"\n}'
@@ -163,13 +164,13 @@ class parameter:
 
     def add_to_step(self):
         pass
-    
+
     def remove(self):
         pass
-    
+
     def update(self):
         pass
-    
+
     def nest(self, dict):
         pass
 
