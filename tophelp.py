@@ -1,13 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-#    _______          _          _
-#   |__   __|        | |        | |
-#      | | ___  _ __ | |__   ___| |_ __
-#      | |/ _ \| '_ \| '_ \ / _ \ | '_ \
-#      | | (_) | |_) | | | |  __/ | |_) |
-#      |_|\___/| .__/|_| |_|\___|_| .__/
-#              | |                | |
-#              |_|                |_|
+
 class tophelp_window:
     '''
     Creates the TOPhelp screen and URL changer functionality. Requires a direct definition of the root/master window.

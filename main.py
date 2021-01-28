@@ -3,13 +3,6 @@ import tkinter as tk
 from tkinter import messagebox
 import ctypes
 from tophelp import *
-#    _____             _
-#   |  __ \           | |
-#   | |__) |___   ___ | |_
-#   |  _  // _ \ / _ \| __|
-#   | | \ \ (_) | (_) | |_
-#   |_|  \_\___/ \___/ \__|
-
 class masterwindow:
     '''
     Creates the basic window and frame to fit standard information in.
@@ -55,14 +48,8 @@ class MainMenu(masterwindow):
     def new_window(self):
         self.new_root = tk.Toplevel(self.root_var)
         app = tophelp_window(self.new_root)
-#                 _   _                _____
-#       /\       | | (_)              / ____|
-#      /  \   ___| |_ _  ___  _ __   | (___   ___  __ _ _   _  ___ _ __   ___ ___
-#     / /\ \ / __| __| |/ _ \| '_ \   \___ \ / _ \/ _` | | | |/ _ \ '_ \ / __/ _ \
-#    / ____ \ (__| |_| | (_) | | | |  ____) |  __/ (_| | |_| |  __/ | | | (_|  __/
-#   /_/    \_\___|\__|_|\___/|_| |_| |_____/ \___|\__, |\__,_|\___|_| |_|\___\___|
-#                                                    | |
-#                                                    |_|
+
+
 class actionsequence():
     def __init__(self, formatversion="2.6", export=832217040,  ):
         self.formatversion = formatversion
