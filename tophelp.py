@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
 
-print("Test")
-
 class tophelp_window:
     '''
     Creates the TOPhelp screen and URL changer functionality. Requires a direct definition of the root/master window.
