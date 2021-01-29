@@ -3,7 +3,7 @@ class actionsequence():
         self.formatversion = formatversion
         self.export = export
 
-class as_variable:
+class variable:
     '''
 
     Creates an action sequence variable. \n
@@ -65,7 +65,7 @@ class parameter:
 
     def nest(self, dict):
         pass
-
+def create(variables, parameters)
 
 print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
 '''
