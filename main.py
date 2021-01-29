@@ -5,10 +5,11 @@ import ctypes
 import tophelp as toph
 # import actionsequence as acts
 
-
+# Create
 class MainMenu:
     '''
-    Creates the main menu. Requires a direct definition of the root/master window.
+    Creates the main menu. Requires a direct definition of the
+    root/master window.
     '''
     def __init__(self, root_var):
         self.root_var = root_var
@@ -17,21 +18,19 @@ class MainMenu:
         self.root_var.lift()
 
         # Create a consistent header everywhere
-        self.header_frame = tk.Frame(root_var)
-        self.header_frame.pack()
-
-        header = tk.Label(self.header_frame,
-                          text="Do not share with clients!",
-                          font="impact")
-        header.pack()
-
         self.frame = tk.Frame(root_var)
         self.frame.pack()
+        self.header = tk.Label(self.frame,
+                          text="Do not share with clients!",
+                          font="impact")
+        self.header.pack()
 
         self.root_var.title("MerijnA's TOPkit")
 
-        self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk", command=self.new_window)
-        self.quitbutton = tk.Button(self.frame, text="Quit this tool", command=root_var.destroy)
+        self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk",
+                                    command=self.new_window)
+        self.quitbutton = tk.Button(self.frame, text="Quit this tool",
+                                    command=root_var.destroy)
 
         self.btn_tophelp.pack()
         self.quitbutton.pack()
@@ -54,4 +53,4 @@ App = MainMenu(root)
 # Make the application responsive by refreshing it over and over
 root.mainloop()
 
-# That's all it takes to make the heart of this application beat. Now time to make it function.
+# That's all it takes to make the heart of this application beat.

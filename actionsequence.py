@@ -1,5 +1,10 @@
 class actionsequence():
-    def __init__(self, formatversion="2.6", export=832217040,  ):
+    def __init__(   self,
+                    formatversion="2.6",
+                    exportdate=832217040,
+                    name=" -- ",
+                    description=" -- ",
+                    structurename=" -- "):
         self.formatversion = formatversion
         self.export = export
 
@@ -24,8 +29,8 @@ class variable:
     def __init__(self, name, value):
         self.name = name
         self.value = value
-    def __repr__(self):
-        return f"{self.name} = {self.value}"
+    # def __repr__(self):
+    #     return f"{self.name} = {self.value}"
 
     #Function that updates variable
     def update(self, name, value):
@@ -37,9 +42,7 @@ class variable:
         if isinstance(self.name, str) and isinstance(self.name, str):
             return '{\n\t"name": "'+self.name+'",\n\t"value": "'+self.value+'"\n}'
         else:
-            print("Both name and value must be a string")
-    def to_var(self):
-        pass
+            raise("Both name and value must be a string")
 
 class step():
     def __init__(self, name, method, url, escapebv, condition):
@@ -51,24 +54,32 @@ class step():
         pass
 
 class parameter:
-    def __init__(self):
-        pass
-
-    def add_to_step(self):
-        pass
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
 
     def remove(self):
         pass
 
-    def update(self):
-        pass
+    def update(self, name, value):
+        self.name = name
+        self.value = value
+        return '"'+self.name+'": "'+self.value+'"'
 
-    def nest(self, dict):
-        pass
+    def nest(self, name, value):
+        self._nested_name = name
+        self._nested_value = value
+
+        self.value =
+        return '"'+self.name+'": "'+self.value+'"'
+
+"body": "{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}"
+
 def create(variables, parameters)
 
-print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
 '''
+print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
+creates:
 {
         "status": "firstLine",
         "callerLookup": {
