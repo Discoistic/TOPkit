@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 import ctypes
 from tophelp import *
+
+
 class masterwindow:
     '''
     Creates the basic window and frame to fit standard information in.
