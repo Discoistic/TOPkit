@@ -2,7 +2,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import ctypes
-import tophelp as toph
+import tophelp as th
+import actionsequence as ac
 # import actionsequence as acts
 
 # Create
@@ -37,7 +38,7 @@ class MainMenu:
 
     def new_window(self):
         self.new_root = tk.Toplevel(self.root_var)
-        app = toph.tophelp_window(self.new_root)
+        app = th.tophelp_window(self.new_root)
 
 
 # This piece of code mirrors the window icon to the taskbar icon

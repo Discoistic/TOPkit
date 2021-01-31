@@ -1,5 +1,3 @@
-import json
-
 class actionsequence():
     def __init__(   self,
                     formatversion="2.6",
@@ -12,17 +10,19 @@ class actionsequence():
         self.name = name
         self.description = description
         self.structurename = structurename
-        self._variables = [] # Stores the variables. Crucial!
+        self._variables = []
         self._steps = []
 
-    def add_variable(self, variable):
-        self._variables.append(variable)
+    def add_variables(self, variables):
+        for var in variables:
+            self._variables.append(var)
 
     def reset_variables(self):
         self._variables = []
 
-    def add_step(self, step):
-        self._steps.append()
+    def add_steps(self, steps):
+        for step in steps:
+            self._steps.append(step)
 
     def reset_steps(self, step):
         self._steps = []
@@ -45,7 +45,7 @@ class actionsequence():
         }
 
 
-class variable:
+class nvpair:
     def __init__(self, name, value):
         self.name = name
         self.value = value
@@ -73,8 +73,14 @@ class step():
         self.condition = condition
         self._headers = []
 
-    def add_header(self, header):
-        self._headers.append()
+    def add_header(self, header=" ", auth=FALSE, auth_user, auth_apppw):
+        if auth == TRUE:
+            auth_header = {"name": "Authorization",
+                            "Value": 'Basic  ${_base64(_variables.'+auth_user.name+' + \":\" + _variables.'+auth_apppw.value+')}'
+                            }
+            self._headers.append(auth_header)
+        else:
+            self._headers.append(header)
 
     def link_body(self):
         pass
@@ -95,25 +101,35 @@ class parameter:
     def __init__(self, name, value):
         self.name = name
         self.value = value
-
-    def remove(self):
-        pass
+        self.is_nested = FALSE
 
     def update(self, name, value):
         self.name = name
         self.value = value
-        return '"'+self.name+'": "'+self.value+'"'
 
-    def nest(self, name, value):
+    def nest(self, name, n_name, n_value):
         self._nested_name = name
         self._nested_value = value
+        self.is_nested = TRUE
+        self.value = None
 
-        self.value =
-        return '"'+self.name+'": "'+self.value+'"'
+    def __repr__(self):
+        if self.is_nested == FALSE:
+            return {self.name:{
+                                self.self._nested_name:self._nested_value
+                                }
+                    }
+        else:
+            return {self.name:self.value}
 
-
+create-inc = actionsequence()
 '''
-"body": "{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}"
+"body": "{  \n\t\"status\": \"firstLine\",
+            ---------------------------------------
+            \n\t\"callerLookup\": {
+            \n\t\t\"email\": \"${aanmelderemail}\"
+            \n\t}
+            \n}"
 
 print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
 creates:
