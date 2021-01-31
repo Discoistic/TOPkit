@@ -1,3 +1,5 @@
+import json
+
 class actionsequence():
     def __init__(   self,
                     formatversion="2.6",
@@ -6,31 +8,49 @@ class actionsequence():
                     description=" -- ",
                     structurename=" -- "):
         self.formatversion = formatversion
-        self.export = export
+        self.export = exportdate
+        self.name = name
+        self.description = description
+        self.structurename = structurename
+        self._variables = [] # Stores the variables. Crucial!
+        self._steps = []
+
+    def add_variable(self, variable):
+        self._variables.append(variable)
+
+    def reset_variables(self):
+        self._variables = []
+
+    def add_step(self, step):
+        self._steps.append()
+
+    def reset_steps(self, step):
+        self._steps = []
+
+
+    def build(self, variables):
+        return { # level 1
+        "formatversion": self.formatversion,
+        "exportDate": self.exportdate,
+        "actionSequence":{ # level 2
+            "name": self.name,
+            "description": self.description,
+            "structureName": self.structurename,
+            "configuration":{
+                "variables": self._variables,
+                "mappingDefinitions": [],
+                "steps": self.steps
+                }
+            }
+        }
+
 
 class variable:
-    '''
-
-    Creates an action sequence variable. \n
-    Takes: \n
-    \t    'Name': The name that is shown in the left column
-    \t    'Value': The description/entry that is given in the right column \n
-
-    Functions: \n
-    \t    '.update()': updates the variable with name and/or a value
-    \t    '.to_json()': returns(!) out a pre-formatted json friendly variable. \n
-
-    Examples: \n
-    \t    'vr_td_usr = as_variable(name="topdesk_user", value="Enter in your API user here")'
-    \t    'vr_td_usr.update(name="topdesk_user", value=tk.e.get())' #fills value with tkinter entry
-    \t    'vr_td_usr.json()' #spits out a json formatted line of code
-
-    '''
     def __init__(self, name, value):
         self.name = name
         self.value = value
-    # def __repr__(self):
-    #     return f"{self.name} = {self.value}"
+    def __repr__(self):
+        return {"name": self.name, "value": self.value}
 
     #Function that updates variable
     def update(self, name, value):
@@ -38,20 +58,37 @@ class variable:
         self.value = value
 
     #Spit out variable in json style with necessary checks
-    def to_json(self):
-        if isinstance(self.name, str) and isinstance(self.name, str):
-            return '{\n\t"name": "'+self.name+'",\n\t"value": "'+self.value+'"\n}'
-        else:
-            raise("Both name and value must be a string")
+    # def to_json(self):
+    #     if isinstance(self.name, str) and isinstance(self.name, str):
+    #         return '{\n\t"name": "'+self.name+'",\n\t"value": "'+self.value+'"\n}'
+    #     else:
+    #         raise("Both name and value must be a string")
 
 class step():
-    def __init__(self, name, method, url, escapebv, condition):
+    def __init__(self, name, method, url, escape, condition):
         self.name = name
         self.method = method
-        pass
+        self.url = url
+        self.secape = escape
+        self.condition = condition
+        self._headers = []
 
-    def gen_headers(self):
-        pass
+    def add_header(self, header):
+        self._headers.append()
+
+    def link_body
+
+    def build(self):
+        return {
+        "name": self.name,
+        "method": self.method,
+        "url": self.url,
+        "headers": self._headers,
+        "escapeBodyValues": self.escape,
+        "body": #FILL
+        "executionCondition": self.condition,
+        "customExecutionCondition": ""
+        }
 
 class parameter:
     def __init__(self, name, value):
@@ -73,11 +110,10 @@ class parameter:
         self.value =
         return '"'+self.name+'": "'+self.value+'"'
 
-"body": "{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}"
-
-def create(variables, parameters)
 
 '''
+"body": "{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}"
+
 print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
 creates:
 {
