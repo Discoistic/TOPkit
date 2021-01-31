@@ -76,7 +76,8 @@ class step():
     def add_header(self, header):
         self._headers.append()
 
-    def link_body
+    def link_body(self):
+        pass
 
     def build(self):
         return {
