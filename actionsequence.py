@@ -1,3 +1,4 @@
+import json
 class actionsequence():
     def __init__(   self,
                     formatversion="2.6",
@@ -6,7 +7,7 @@ class actionsequence():
                     description=" -- ",
                     structurename=" -- "):
         self.formatversion = formatversion
-        self.export = exportdate
+        self.exportdate = exportdate
         self.name = name
         self.description = description
         self.structurename = structurename
@@ -14,21 +15,20 @@ class actionsequence():
         self._steps = []
 
     def add_variables(self, variables):
-        for var in variables:
-            self._variables.append(var)
+        self._variables.append(variables)
 
     def reset_variables(self):
         self._variables = []
 
     def add_steps(self, steps):
-        for step in steps:
+        for step in list(steps):
             self._steps.append(step)
 
     def reset_steps(self, step):
         self._steps = []
 
 
-    def build(self, variables):
+    def build(self):
         return { # level 1
         "formatversion": self.formatversion,
         "exportDate": self.exportdate,
@@ -39,7 +39,7 @@ class actionsequence():
             "configuration":{
                 "variables": self._variables,
                 "mappingDefinitions": [],
-                "steps": self.steps
+                "steps": self._steps
                 }
             }
         }
@@ -49,7 +49,7 @@ class nvpair:
     def __init__(self, name, value):
         self.name = name
         self.value = value
-    def __repr__(self):
+    def build(self):
         return {"name": self.name, "value": self.value}
 
     #Function that updates variable
@@ -73,7 +73,7 @@ class step():
         self.condition = condition
         self._headers = []
 
-    def add_header(self, header=" ", auth=FALSE, auth_user, auth_apppw):
+    def add_header(self, header=" ", auth=False, auth_user=None, auth_apppw=None):
         if auth == TRUE:
             auth_header = {"name": "Authorization",
                             "Value": 'Basic  ${_base64(_variables.'+auth_user.name+' + \":\" + _variables.'+auth_apppw.value+')}'
@@ -87,21 +87,21 @@ class step():
 
     def build(self):
         return {
-        "name": self.name,
-        "method": self.method,
-        "url": self.url,
-        "headers": self._headers,
-        "escapeBodyValues": self.escape,
-        "body": #FILL
-        "executionCondition": self.condition,
-        "customExecutionCondition": ""
-        }
+            "name": self.name,
+            "method": self.method,
+            "url": self.url,
+            "headers": self._headers,
+            "escapeBodyValues": self.escape,
+            "body":  " ",  # FILL
+            "executionCondition": self.condition,
+            "customExecutionCondition": ""
+            }
 
 class parameter:
     def __init__(self, name, value):
         self.name = name
         self.value = value
-        self.is_nested = FALSE
+        self.is_nested = False
 
     def update(self, name, value):
         self.name = name
@@ -114,7 +114,7 @@ class parameter:
         self.value = None
 
     def __repr__(self):
-        if self.is_nested == FALSE:
+        if self.is_nested == False:
             return {self.name:{
                                 self.self._nested_name:self._nested_value
                                 }
@@ -122,7 +122,6 @@ class parameter:
         else:
             return {self.name:self.value}
 
-create-inc = actionsequence()
 '''
 "body": "{  \n\t\"status\": \"firstLine\",
             ---------------------------------------
@@ -140,3 +139,13 @@ creates:
         }
 }
 '''
+incidentcreator = actionsequence(name="testrun one",
+                                 description="The first auto-generated actionSequence!",
+                                 structurename="incident1")
+
+td_usr = nvpair(name="TOPdesk User", value="Enter your TOPdesk username")
+td_pw = nvpair(name="App Password", value="Enter your TOPdesk app password")
+
+incidentcreator.add_variables(td_usr.build())
+incidentcreator.add_variables(td_pw.build())
+print(json.dumps(incidentcreator.build()))
