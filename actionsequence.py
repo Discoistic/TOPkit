@@ -81,7 +81,7 @@ class step():
         else:
             self._headers.append(header)
 
-    def add_to_body(self):
+    def link_body(self):
         pass
 
     def build(self):
@@ -106,10 +106,10 @@ class parameter:
         self.name = name
         self.value = value
 
-    def nest(self, name, name, value):
+    def nest(self, name, value):
         self._nested_name = name
         self._nested_value = value
-        self.is_nested = TRUE
+        self.is_nested = True
         self.value = None
 
     def build(self):
