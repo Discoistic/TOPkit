@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
 
+
 class tophelp_window:
     '''
-    Creates the TOPhelp screen and URL changer functionality. Requires a direct definition of the root/master window.
+    Creates the TOPhelp screen and URL changer functionality. Requires a direct
+     definition of the root/master window.
     '''
+
     def __init__(self, root_var):
         self.root_var = root_var
         self.root_var = root_var
@@ -24,8 +27,11 @@ class tophelp_window:
 
         self.root_var.title("TOPhelp link changer")
 
-        changer = tk.Button(self.root_var, text="Click to change url", command=self._urlchanger)
-        changer_explanation = tk.Message(self.root_var, text="Reads last clipboard entry and if TOPhelp URL, changes to MyTOPdesk", )
+        changer = tk.Button(self.root_var,
+                            text="Click to change url",
+                            command=self._urlchanger)
+        changer_explanation = tk.Message(self.root_var,
+                                         text="Reads last clipboard entry and if TOPhelp URL, changes to MyTOPdesk")
 
         changer.pack()
         changer_explanation.pack()

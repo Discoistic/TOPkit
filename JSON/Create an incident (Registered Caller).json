@@ -1,4 +1,4 @@
-f'{"formatVersion": "{2.6}",
+f'{"formatVersion": "2.6",
     "exportDate": 1568803440466,
     "actionSequence": {
         "name": "Create an incident (Registered Caller)",
