@@ -18,8 +18,9 @@ class actionsequence():
         self._variables = []
         self._steps = []
 
-    def add_variables(self, variable):
-        self._variables.append(variable)
+    def add_variables(self, *args):
+        for var in args:
+            self._variables.append(var.build())
 
     def reset_variables(self):
         self._variables = []
@@ -49,21 +50,30 @@ class actionsequence():
 
 
 class nvpair:
-    def __init__(self, name, value):
+    def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
 
-    def build(self):
-        return {"name": self.name, "value": self.value}
+    def is_auth(self, user, pw):
+        self.name = "Authorization"
+        self.value = 'Basic  ${_base64(_variables.' \
+                     + user.name + ' + \":\" + _variables.' \
+                     + pw.name + ')}'
 
     # Function that updates variable
     def update(self, name, value):
         self.name = name
         self.value = value
 
-    # Spit out variable in json style with necessary checks
-    def json_build(self):
-        return '{\n\t"name": "'+self.name+'",\n\t"value": "'+self.value+'"\n}'
+    def build(self, auth=False, auth_user=None, auth_apppw=None):
+        return {"name": self.name, "value": self.value}
+        if auth is True:
+            return {"name": "Authorization",
+                    "value": 'Basic  ${_base64(_variables.'
+                    + auth_user.name + ' + \":\" + _variables.'
+                    + auth_apppw.name + ')}'}
+        else:
+            return {"name": self.name, "value": self.value}
 
 
 class step():
@@ -76,19 +86,13 @@ class step():
         self._parameters = {}
         self._headers = []
 
-    def add_header(self, header=" ",
-                   auth=False, auth_user=None, auth_apppw=None):
-        if auth is True:
-            auth_header = {"name": "Authorization",
-                           "value": 'Basic  ${_base64(_variables.'
-                           + auth_user.name + ' + \":\" + _variables.'
-                           + auth_apppw.name + ')}'}
-            self._headers.append(auth_header)
-        else:
-            self._headers.append(header)
+    def add_headers(self, *args):
+        for header in args:
+            self._headers.append(header.build())
 
-    def add_parameter(self, parameter):
-        self._parameters.update(parameter)
+    def add_parameters(self, *args):
+        for param in args:
+            self._parameters.update(param.build())
 
     def build(self):
         return {
@@ -146,18 +150,15 @@ step1 = step(name="step1", method="POST",
              escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
 
 h_type = nvpair(name="Content-Type", value="application/json")
+h_auth = nvpair()
+h_auth.is_auth(user=td_usr, pw=td_pw)
 
 p_status = parameter(name="status", value="firstLine")
 p_caller = parameter(name="callerLookup")
 p_caller.nest(name="email", value="${aanmelderemail}")
 
-step1.add_header(h_type.build())
-step1.add_header(auth=True, auth_user=td_usr, auth_apppw=td_pw)
-step1.add_parameter(p_status.build())
-step1.add_parameter(p_caller.build())
-incidentcreator.add_variables(td_usr.build())
-incidentcreator.add_variables(td_pw.build())
-incidentcreator.add_variables(td_url.build())
-
+step1.add_headers(h_type, h_auth)
+step1.add_parameters(p_status, p_caller)
 incidentcreator.add_steps(step1.build())
+incidentcreator.add_variables(td_usr, td_pw, td_url)
 print(json.dumps(incidentcreator.build(), indent=2))
