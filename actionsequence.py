@@ -71,6 +71,7 @@ class step():
         self.url = url
         self.escape = escape
         self.condition = condition
+        self._parameters = {}
         self._headers = []
 
     def add_header(self, header=" ",
@@ -84,8 +85,8 @@ class step():
         else:
             self._headers.append(header)
 
-    def link_body(self):
-        pass
+    def add_parameter(self, parameter):
+        self._parameters.update(parameter)
 
     def build(self):
         return {
@@ -101,7 +102,7 @@ class step():
 
 
 class parameter:
-    def __init__(self, name, value):
+    def __init__(self, name, value=None):
         self.name = name
         self.value = value
         self.is_nested = False
@@ -117,9 +118,9 @@ class parameter:
         self.value = None
 
     def build(self):
-        if self.is_nested is False:
+        if self.is_nested is True:
             return {self.name: {
-                                self.self._nested_name: self._nested_value
+                                self._nested_name: self._nested_value
                                 }
                     }
         else:
@@ -162,10 +163,14 @@ step1 = step(name="step1", method="POST",
 
 h_type = nvpair(name="Content-Type", value="application/json")
 
-p_
+p_status = parameter(name="status", value="firstLine")
+p_caller = parameter(name="callerLookup")
+p_caller.nest(name="email", value="${aanmelderemail}")
 
 step1.add_header(h_type.build())
 step1.add_header(auth=True, auth_user=td_usr, auth_apppw=td_pw)
+step1.add_parameter(p_status.build())
+step1.add_parameter(p_caller.build())
 
 
 incidentcreator.add_variables(td_usr.build())
