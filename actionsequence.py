@@ -2,7 +2,7 @@ import json
 
 
 class actionsequence():
-
+    '''Creates action sequence class. Used to build the final JSON-based output.'''
     def __init__(self,
                  formatversion="2.6",
                  exportdate=832217040,
@@ -30,8 +30,9 @@ class actionsequence():
         self._steps = []
 
     def build(self):
+        '''Returns python DICT which can be exported to json or any other file'''
         return {  # level 1
-                "formatversion": self.formatversion,
+                "formatVersion": self.formatversion,
                 "exportDate": self.exportdate,
                 "actionSequence": {  # level 2
                     "name": self.name,
@@ -78,7 +79,7 @@ class step():
                    auth=False, auth_user=None, auth_apppw=None):
         if auth is True:
             auth_header = {"name": "Authorization",
-                           "Value": 'Basic  ${_base64(_variables.'
+                           "value": 'Basic  ${_base64(_variables.'
                            + auth_user.name + ' + \":\" + _variables.'
                            + auth_apppw.name + ')}'}
             self._headers.append(auth_header)
@@ -95,7 +96,7 @@ class step():
             "url": self.url,
             "headers": self._headers,
             "escapeBodyValues": self.escape,
-            "body":  " ",  # FILL
+            "body": repr(self._parameters),
             "executionCondition": self.condition,
             "customExecutionCondition": ""
             }
@@ -127,24 +128,6 @@ class parameter:
             return {self.name: self.value}
 
 
-'''
-Some examples to keep me sharp
-print("{\n\t\"status\": \"firstLine\",\n\t\"callerLookup\": {\n\t\t\"email\": \"${aanmelderemail}\"\n\t}\n}")
-creates
-"body": "{  \n\t\"status\": \"firstLine\",
-            ---------------------------------------
-            \n\t\"callerLookup\": {
-            \n\t\t\"email\": \"${aanmelderemail}\"
-            \n\t}
-            \n}"
-or:
-{
-        "status": "firstLine",
-        "callerLookup": {
-                "email": "${aanmelderemail}"
-        }
-}
-'''
 incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
                                  name="Create an incident (Registered Caller)",
                                  description="KI 11169\nVersion: 1.1\nDate: 18-09-2019\nAuthor: ChrisF / ChloEM\n\nStep 1: Create a new 1st line incident as a registered caller according to the details specified in the body of the step.\n\nTo add more fields in the body, please see:\n\nhttps://developers.topdesk.com/documentation/index.html#api-Incident-CreateIncident",
@@ -171,12 +154,9 @@ step1.add_header(h_type.build())
 step1.add_header(auth=True, auth_user=td_usr, auth_apppw=td_pw)
 step1.add_parameter(p_status.build())
 step1.add_parameter(p_caller.build())
-
-
 incidentcreator.add_variables(td_usr.build())
 incidentcreator.add_variables(td_pw.build())
 incidentcreator.add_variables(td_url.build())
 
 incidentcreator.add_steps(step1.build())
-
-print(json.dumps(incidentcreator.build()))
+print(json.dumps(incidentcreator.build(), indent=2))
