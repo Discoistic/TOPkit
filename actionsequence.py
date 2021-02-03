@@ -2,7 +2,8 @@ import json
 
 
 class actionsequence():
-    '''Creates action sequence class. Used to build the final JSON-based output.'''
+    '''Creates action sequence class. Bundles everything'''
+
     def __init__(self,
                  formatversion="2.6",
                  exportdate=832217040,
@@ -30,7 +31,7 @@ class actionsequence():
         self._steps = []
 
     def build(self):
-        '''Returns python DICT which can be exported to json or any other file'''
+        '''Returns python DICT'''
         return {  # level 1
                 "formatVersion": self.formatversion,
                 "exportDate": self.exportdate,
@@ -130,7 +131,7 @@ class parameter:
 
 incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
                                  name="Create an incident (Registered Caller)",
-                                 description="KI 11169\nVersion: 1.1\nDate: 18-09-2019\nAuthor: ChrisF / ChloEM\n\nStep 1: Create a new 1st line incident as a registered caller according to the details specified in the body of the step.\n\nTo add more fields in the body, please see:\n\nhttps://developers.topdesk.com/documentation/index.html#api-Incident-CreateIncident",
+                                 description="Amazing story",
                                  structurename="incident1")
 
 td_usr = nvpair(name="topdesk_user",
