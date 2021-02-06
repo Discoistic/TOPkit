@@ -1,6 +1,3 @@
-import json
-
-
 class actionsequence():
     '''Creates action sequence class. Bundles everything'''
 
@@ -50,6 +47,7 @@ class actionsequence():
 
 
 class nvpair:
+
     def __init__(self, name=None, value=None):
         self.name = name
         self.value = value
@@ -131,34 +129,3 @@ class parameter:
                     }
         else:
             return {self.name: self.value}
-
-
-incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
-                                 name="Create an incident (Registered Caller)",
-                                 description="Amazing story",
-                                 structurename="incident1")
-
-td_usr = nvpair(name="topdesk_user",
-                value="Enter the name of your API Operator account")
-td_pw = nvpair(name="topdesk_applicationpassword",
-               value="Enter the application password")
-td_url = nvpair(name="topdesk_url",
-                value="Enter your TOPdesk URL here")
-
-step1 = step(name="step1", method="POST",
-             url="${_variables.topdesk_url?no_esc}/tas/api/incidents",
-             escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
-
-h_type = nvpair(name="Content-Type", value="application/json")
-h_auth = nvpair()
-h_auth.is_auth(user=td_usr, pw=td_pw)
-
-p_status = parameter(name="status", value="firstLine")
-p_caller = parameter(name="callerLookup")
-p_caller.nest(name="email", value="${aanmelderemail}")
-
-step1.add_headers(h_type, h_auth)
-step1.add_parameters(p_status, p_caller)
-incidentcreator.add_steps(step1.build())
-incidentcreator.add_variables(td_usr, td_pw, td_url)
-print(json.dumps(incidentcreator.build(), indent=2))

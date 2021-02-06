@@ -1,17 +1,16 @@
 # Start with importing all necessary stuff
 import tkinter as tk
-from tkinter import messagebox
-import ctypes
-import tophelp as th
-import actionsequence as ac
+# import ctypes
+import gui as ui
 # import actionsequence as acts
 
-# Create
+
 class MainMenu:
     '''
     Creates the main menu. Requires a direct definition of the
     root/master window.
     '''
+
     def __init__(self, root_var):
         self.root_var = root_var
         self.root_var.iconbitmap(r'icon.ico')  # Dit werkt niet
@@ -20,25 +19,31 @@ class MainMenu:
 
         # Create a consistent header everywhere
         self.frame = tk.Frame(root_var)
-        self.frame.pack()
+        self.frame.grid()
         self.header = tk.Label(self.frame,
-                          text="Do not share with clients!",
-                          font="impact")
-        self.header.pack()
+                               text="Do not share with clients!",
+                               font="impact")
+        self.header.grid()
 
         self.root_var.title("MerijnA's TOPkit")
 
         self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk",
-                                    command=self.new_window)
+                                     command=self.tophelp_window)
+        self.btn_as = tk.Button(self.frame, text="Action Sequence builder",
+                                command=self.as_window)
         self.quitbutton = tk.Button(self.frame, text="Quit this tool",
                                     command=root_var.destroy)
 
-        self.btn_tophelp.pack()
-        self.quitbutton.pack()
+        self.btn_tophelp.grid()
+        self.btn_as.grid()
+        self.quitbutton.grid()
 
-    def new_window(self):
+    def tophelp_window(self):
         self.new_root = tk.Toplevel(self.root_var)
-        app = th.tophelp_window(self.new_root)
+        ui.tophelp_window(self.new_root)
+
+    def as_window(self):
+        ui.as_window(self.root_var)
 
 
 # This piece of code mirrors the window icon to the taskbar icon
