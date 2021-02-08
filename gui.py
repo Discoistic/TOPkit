@@ -67,31 +67,31 @@ class as_window():
         self.root_var.title("ACtion Sequence builder")
 
         # Require actionsequence information
-        self.acts_frame = tk.Frame(self.root_var, borderwidth = 1)
-        self.acts_frame.grid()
+        self.a_frame = tk.Frame(self.root_var, borderwidth = 1)
+        self.a_frame.grid()
 
-        self.a_name = form_Entry('h', master=self.acts_frame, name="as_name", label="Name")
-        self.a_desc = form_Entry('h', master=self.acts_frame, name="as_desc", label="Description")
-        self.a_struc = form_Entry('h', master=self.acts_frame, name="as_name", label="Structurename")
-
-        # Create the Auth Frame
-        self.auth_frame = tk.Frame(self.root_var, borderwidth = 1)
-        self.auth_frame.grid()
+        self.a_name = form_Entry('h', master=self.a_frame, name="as_name", label="Name")
+        self.a_desc = form_Entry('h', master=self.a_frame, name="as_desc", label="Description")
+        self.a_struc = form_Entry('h', master=self.a_frame, name="as_name", label="Structurename")
 
         # Create the TOPdesk username and password form
-        self.v_usr = form_Entry('v', master=self.auth_frame, name="topdesk_user", label="Enter TOPdesk username")
-        self.v_pw = form_Entry('v', master=self.auth_frame, name="app_pw", label="Enter Application password")
-        self.v_url = form_Entry('v', master=self.auth_frame, name="topdesk_url", label="Enter TOPdesk URL")
+        self.v_usr = form_Entry('v', master=self.a_frame, name="topdesk_user", label="Enter TOPdesk username")
+        self.v_pw = form_Entry('v', master=self.a_frame, name="app_pw", label="Enter Application password")
+        self.v_url = form_Entry('v', master=self.a_frame, name="topdesk_url", label="Enter TOPdesk URL")
 
         # Create the Auth Frame
         self.inc_frame = tk.Frame(self.root_var, borderwidth=1)
         self.inc_frame.grid()
 
-        # Create the TOPdesk username and password form
-        self.p_status = form_Entry('p', master=self.inc_frame, name="status", label="Enter status (firstLine)")
-        self.p_caller = form_Entry('p', master=self.inc_frame, name="caller", label="Enter TOPdesk URL")
+        # TOPdesk details part
+        self.p_status = form_Entry('p', master=self.inc_frame, name="callerLookup", label="Caller's email", nest_by="email")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="briefDescription", label="Brief Description")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="entryType", label="Entry Type")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="callType", label="Call Type")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="category", label="Category", nest_by="name")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="subcategory", label="SubCategory", nest_by="name")
 
-        self.button = tk.Button(self.auth_frame,
+        self.button = tk.Button(self.inc_frame,
                             text="Create",
                             command=lambda: self.create_stuff())
         self.button.grid()
@@ -106,6 +106,11 @@ class as_window():
         self.h_auth = ac.nvpair()
         self.h_auth.is_auth(user=self.v_usr.var, pw=self.v_pw.var)
 
+        variables = [entry.var for entry in form_Entry.entries
+                     if entry.type == "v" and entry.use.get() is True]
+        parameters = [entry.var for entry in form_Entry.entries
+                      if entry.type == "p" and entry.use.get() is True]
+
         incidentcreator = ac.actionsequence(formatversion="2.6", exportdate=time.time(),
                                           description=self.a_desc.var.value,
                                          structurename=self.a_struc.var.value,
@@ -116,10 +121,9 @@ class as_window():
                      escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
 
         step1.add_headers(self.h_type, self.h_auth)
-        # step1.add_headers(*[entry.var for entry in form_Entry.entries if entry.type == "h" and entry.use.get() is True]) OBSOLETE FOR NOW
-        step1.add_parameters(*[entry.var for entry in form_Entry.entries if entry.type == "p" and entry.use.get() is True])
+        step1.add_parameters(*parameters)
         incidentcreator.add_steps(step1.build())
-        incidentcreator.add_variables(*[entry.var for entry in form_Entry.entries if entry.type == "v" and entry.use.get() is True])
+        incidentcreator.add_variables(*variables)
         print(json.dumps(incidentcreator.build(), indent=2))
 
 
@@ -127,15 +131,16 @@ class form_Entry:
     row_num = 0
     entries = []
 
-    def __init__(self, type, master, name, label):
+    def __init__(self, type, master, name, label, explainer=" ", nest_by="_"):
         self.use = tk.BooleanVar()
         self.use.set(True)
         self.type = type
+        self.explainer = explainer
 
         self.label = tk.Label(master, text=label)
         self.entry = tk.Entry(master)
         self.check = tk.Checkbutton(master, var=self.use,
-                                    onvalue=True, offvalue=False)
+                                    onvalue=True, offvalue=False, text=self.explainer)
 
         self.label.grid(in_=master, row=form_Entry.row_num, column=0, pady=1)
         self.entry.grid(in_=master, row=form_Entry.row_num, column=1, pady=2)
@@ -145,13 +150,23 @@ class form_Entry:
 
         form_Entry.entries.append(self)
 
+        def tab_order():
+            for wl in form_Entry.entries:
+                wl.entry.lift()
+        tab_order()
+
+        self.nest_by = nest_by
         self.name = name
         # self.var = ac.nvpair(name=self.name, value=self.entry.get())
 
     def compile(self):
         if self.use.get() is True:
-            if type == 'p' or 'P':
-                self.var = ac.parameter(name=self.name, value=self.entry.get())
+            if self.type == 'p' or 'P':
+                if "_" not in self.nest_by:
+                    self.var = ac.parameter(name=self.name)
+                    self.var.nest(name=self.nest_by, value=self.entry.get())
+                else:
+                    self.var = ac.parameter(name=self.name, value=self.entry.get())
             else:
                 self.var = ac.nvpair(name=self.name, value=self.entry.get())
         else:
@@ -195,7 +210,6 @@ class tophelp_window:
     def _urlchanger(self):
         '''Change TOPhelp URL to My TOPdesk URL'''
         # First get the clipboard content
-        # Gets a TOPhelp URL, such as https://tophelp.topdesk.com/tas/public/ssp/content/detail/knowledgeitem?unid=513caaea948e4b8a9e567c9ebbce60b4
         clipboard = self.root_var.clipboard_get()
 
         # check for it being a KI hotlink

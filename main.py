@@ -15,7 +15,7 @@ root = tk.Tk()
 # Load the content of the main menu into the frame
 App = ui.MainMenu(root)
 
-# Make the application responsive by refreshing it over and over
+# Make the application responsive 6by refreshing it over and over
 root.mainloop()
 
 # That's all it takes to make the heart of this application beat.
