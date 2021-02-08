@@ -5,6 +5,47 @@ import json
 import time
 
 
+class MainMenu:
+    '''
+    Creates the main menu. Requires a direct definition of the
+    root/master window.
+    '''
+
+    def __init__(self, root_var):
+        self.root_var = root_var
+        self.root_var.iconbitmap(r'icon.ico')  # Dit werkt niet
+        self.root_var.geometry("500x150")
+        self.root_var.lift()
+
+        # Create a consistent header everywhere
+        self.frame = tk.Frame(root_var)
+        self.frame.grid()
+        self.header = tk.Label(self.frame,
+                               text="Do not share with clients!",
+                               font="impact")
+        self.header.grid()
+
+        self.root_var.title("MerijnA's TOPkit")
+
+        self.btn_tophelp = tk.Button(self.frame, text="TOPhelp to My Topdesk",
+                                     command=self.tophelp_window)
+        self.btn_as = tk.Button(self.frame, text="Action Sequence builder",
+                                command=self.as_window)
+        self.quitbutton = tk.Button(self.frame, text="Quit this tool",
+                                    command=root_var.destroy)
+
+        self.btn_tophelp.grid()
+        self.btn_as.grid()
+        self.quitbutton.grid()
+
+    def tophelp_window(self):
+        self.new_root = tk.Toplevel(self.root_var)
+        tophelp_window(self.new_root)
+
+    def as_window(self):
+        as_window(self.root_var)
+
+
 class as_window():
 
     def __init__(self, root_root):
@@ -57,8 +98,10 @@ class as_window():
 
     def create_stuff(self):
         tk.messagebox.askokcancel("Are you ready?", "This irreversably overwrites any previously generated actions.")
+
         for entry in form_Entry.entries:
             entry.compile()
+
         self.h_type = ac.nvpair(name="Content-Type", value="application/json")
         self.h_auth = ac.nvpair()
         self.h_auth.is_auth(user=self.v_usr.var, pw=self.v_pw.var)
@@ -67,9 +110,11 @@ class as_window():
                                           description=self.a_desc.var.value,
                                          structurename=self.a_struc.var.value,
                                          name=self.a_name.var.value)
+
         step1 = ac.step(name="step1", method="POST",
                      url="${_variables.topdesk_url?no_esc}/tas/api/incidents",
                      escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
+
         step1.add_headers(self.h_type, self.h_auth)
         # step1.add_headers(*[entry.var for entry in form_Entry.entries if entry.type == "h" and entry.use.get() is True]) OBSOLETE FOR NOW
         step1.add_parameters(*[entry.var for entry in form_Entry.entries if entry.type == "p" and entry.use.get() is True])
@@ -81,6 +126,7 @@ class as_window():
 class form_Entry:
     row_num = 0
     entries = []
+
     def __init__(self, type, master, name, label):
         self.use = tk.BooleanVar()
         self.use.set(True)
@@ -110,37 +156,6 @@ class form_Entry:
                 self.var = ac.nvpair(name=self.name, value=self.entry.get())
         else:
             print(f"Ignored {self}")
-
-'''
-incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
-                                  description="Amazing story",
-                                 structurename="incident1")
-
-td_usr = nvpair(name="topdesk_user",
-                value="Enter the name of your API Operator account")
-td_pw = nvpair(name="topdesk_applicationpassword",
-               value="Enter the application password")
-td_url = nvpair(name="topdesk_url",
-                value="Enter your TOPdesk URL here")
-
-step1 = step(name="step1", method="POST",
-             url="${_variables.topdesk_url?no_esc}/tas/api/incidents",
-             escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
-
-h_type = nvpair(name="Content-Type", value="application/json")
-h_auth = nvpair()
-h_auth.is_auth(user=td_usr, pw=td_pw)
-
-p_status = parameter(name="status", value="firstLine")
-p_caller = parameter(name="callerLookup")
-p_caller.nest(name="email", value="${aanmelderemail}")
-
-step1.add_headers(h_type, h_auth)
-step1.add_parameters(p_status, p_caller)
-incidentcreator.add_steps(step1.build())
-incidentcreator.add_variables(td_usr, td_pw, td_url)
-print(json.dumps(incidentcreator.build(), indent=2))
-'''
 
 
 class tophelp_window:
