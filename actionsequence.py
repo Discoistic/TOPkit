@@ -16,6 +16,7 @@ class actionsequence():
         self._steps = []
 
     def add_variables(self, *args):
+        '''Takes a list of variables and ties them to the a.s.'''
         for var in args:
             self._variables.append(var.build())
 

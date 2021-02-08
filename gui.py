@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import actionsequence as ac
+import json
+import time
 
 
 class as_window():
@@ -24,29 +26,29 @@ class as_window():
         self.root_var.title("ACtion Sequence builder")
 
         # Require actionsequence information
-        self.acts_frame = tk.Frame(self.root_var)
+        self.acts_frame = tk.Frame(self.root_var, borderwidth = 1)
         self.acts_frame.grid()
 
-        self.ac_name = form_Entry(master=self.acts_frame, name="as_name", label="Name")
-        self.ac_desc = form_Entry(master=self.acts_frame, name="as_desc", label="Description")
-        self.ac_name = form_Entry(master=self.acts_frame, name="as_name", label="Structurename")
+        self.ac_name = form_Entry('h', master=self.acts_frame, name="as_name", label="Name")
+        self.ac_desc = form_Entry('h', master=self.acts_frame, name="as_desc", label="Description")
+        self.ac_struc = form_Entry('h', master=self.acts_frame, name="as_name", label="Structurename")
 
         # Create the Auth Frame
-        self.auth_frame = tk.Frame(self.root_var)
+        self.auth_frame = tk.Frame(self.root_var, borderwidth = 1)
         self.auth_frame.grid()
 
         # Create the TOPdesk username and password form
-        self.v_usr = form_Entry(master=self.auth_frame, name="topdesk_user", label="Enter TOPdesk username")
-        self.v_pw = form_Entry(master=self.auth_frame, name="app_pw", label="Enter Application password")
-        self.v_url = form_Entry(master=self.auth_frame, name="topdesk_url", label="Enter TOPdesk URL")
+        self.v_usr = form_Entry('v', master=self.auth_frame, name="topdesk_user", label="Enter TOPdesk username")
+        self.v_pw = form_Entry('v', master=self.auth_frame, name="app_pw", label="Enter Application password")
+        self.v_url = form_Entry('v', master=self.auth_frame, name="topdesk_url", label="Enter TOPdesk URL")
 
         # Create the Auth Frame
-        self.inc_frame = tk.Frame(self.root_var)
+        self.inc_frame = tk.Frame(self.root_var, borderwidth=1)
         self.inc_frame.grid()
 
         # Create the TOPdesk username and password form
-        self.p_url = form_Entry(master=self.inc_frame, name="status", label="Enter status (firstLine)")
-        self.p_caller = form_Entry(master=self.inc_frame, name="caller", label="Enter TOPdesk URL")
+        self.p_status = form_Entry('p', master=self.inc_frame, name="status", label="Enter status (firstLine)")
+        self.p_caller = form_Entry('p', master=self.inc_frame, name="caller", label="Enter TOPdesk URL")
 
         self.button = tk.Button(self.auth_frame,
                             text="Create",
@@ -54,22 +56,34 @@ class as_window():
         self.button.grid()
 
     def create_stuff(self):
+        tk.messagebox.askokcancel("Are you ready?", "This irreversably overwrites any previously generated actions.")
+        for entry in form_Entry.entries:
+            entry.compile()
         self.h_type = ac.nvpair(name="Content-Type", value="application/json")
         self.h_auth = ac.nvpair()
         self.h_auth.is_auth(user=self.v_usr.var, pw=self.v_pw.var)
 
-        # step1.add_headers(h_type, h_auth)
-        # step1.add_parameters(p_status, p_caller)
-        # incidentcreator.add_steps(step1.build())
-        # incidentcreator.add_variables(td_usr, td_pw, td_url)
-        # print(json.dumps(incidentcreator.build(), indent=2))
+        incidentcreator = ac.actionsequence(formatversion="2.6", exportdate=time.time(),
+                                          description=self.ac_desc.var.value,
+                                         structurename=self.ac_struc.var.value,
+                                         name=self.ac_name.var.value)
+        step1 = ac.step(name="step1", method="POST",
+                     url="${_variables.topdesk_url?no_esc}/tas/api/incidents",
+                     escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
+        step1.add_headers(*[entry.var for entry in form_Entry.entries if entry.type == "h"])
+        step1.add_parameters(*[entry.var for entry in form_Entry.entries if entry.type == "p"])
+        incidentcreator.add_steps(step1.build())
+        incidentcreator.add_variables(*[entry.var for entry in form_Entry.entries if entry.type == "v"])
+        print(json.dumps(incidentcreator.build(), indent=2))
 
 
 class form_Entry:
     row_num = 0
-    def __init__(self, master, name, label):
+    entries = []
+    def __init__(self, type, master, name, label):
         self.use = tk.BooleanVar()
         self.use.set(True)
+        self.type = type
 
         self.label = tk.Label(master, text=label)
         self.entry = tk.Entry(master)
@@ -81,18 +95,21 @@ class form_Entry:
         self.check.grid(in_=master, row=form_Entry.row_num, column=2, pady=1)
 
         form_Entry.row_num += 1
+        form_Entry.entries.append(self)
 
         self.name = name
-
+        # self.var = ac.nvpair(name=self.name, value=self.entry.get())
 
     def compile(self):
-        self.var = ac.nvpair(name=self.name, value=self.entry.get())
+        if type == 'p' or 'P':
+            self.var = ac.parameter(name=self.name, value=self.entry.get())
+        else:
+            self.var = ac.nvpair(name=self.name, value=self.entry.get())
 
 
 '''
 incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
-                                 name="Create an incident (Registered Caller)",
-                                 description="Amazing story",
+                                  description="Amazing story",
                                  structurename="incident1")
 
 td_usr = nvpair(name="topdesk_user",
