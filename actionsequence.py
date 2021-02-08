@@ -29,22 +29,37 @@ class actionsequence():
     def reset_steps(self, step):
         self._steps = []
 
-    def build(self):
+    def build(self, am_export=False):
         '''Returns python DICT'''
-        return {  # level 1
-                "formatVersion": self.formatversion,
-                "exportDate": self.exportdate,
-                "actionSequence": {  # level 2
-                    "name": self.name,
-                    "description": "By MerijnA's TOPkit\n"+self.description,
-                    "structureName": self.structurename,
-                    "configuration": {
-                        "variables": self._variables,
-                        "mappingDefinitions": [],
-                        "steps": self._steps
+        if am_export is False:
+            return {  # level 1
+                    "formatVersion": self.formatversion,
+                    "exportDate": self.exportdate,
+                    "actionSequence": {  # level 2
+                        "name": self.name,
+                        "description": "By MerijnA's TOPkit\n"+self.description,
+                        "structureName": self.structurename,
+                        "configuration": {
+                            "variables": self._variables,
+                            "mappingDefinitions": [],
+                            "steps": self._steps
+                            }
                         }
                     }
-                }
+        else:
+            return {  # level 1
+                    "formatVersion": self.formatversion,
+                    "exportDate": self.exportdate,
+                    "action": {  # level 2
+                        "name": self.name,
+                        "description": "By MerijnA's TOPkit\n"+self.description,
+                        "configuration": {
+                            "variables": self._variables,
+                            "mappingDefinitions": [],
+                            "steps": self._steps
+                            }
+                        }
+                    }
 
 
 class nvpair:

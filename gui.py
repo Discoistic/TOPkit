@@ -29,9 +29,9 @@ class as_window():
         self.acts_frame = tk.Frame(self.root_var, borderwidth = 1)
         self.acts_frame.grid()
 
-        self.ac_name = form_Entry('h', master=self.acts_frame, name="as_name", label="Name")
-        self.ac_desc = form_Entry('h', master=self.acts_frame, name="as_desc", label="Description")
-        self.ac_struc = form_Entry('h', master=self.acts_frame, name="as_name", label="Structurename")
+        self.a_name = form_Entry('h', master=self.acts_frame, name="as_name", label="Name")
+        self.a_desc = form_Entry('h', master=self.acts_frame, name="as_desc", label="Description")
+        self.a_struc = form_Entry('h', master=self.acts_frame, name="as_name", label="Structurename")
 
         # Create the Auth Frame
         self.auth_frame = tk.Frame(self.root_var, borderwidth = 1)
@@ -64,16 +64,17 @@ class as_window():
         self.h_auth.is_auth(user=self.v_usr.var, pw=self.v_pw.var)
 
         incidentcreator = ac.actionsequence(formatversion="2.6", exportdate=time.time(),
-                                          description=self.ac_desc.var.value,
-                                         structurename=self.ac_struc.var.value,
-                                         name=self.ac_name.var.value)
+                                          description=self.a_desc.var.value,
+                                         structurename=self.a_struc.var.value,
+                                         name=self.a_name.var.value)
         step1 = ac.step(name="step1", method="POST",
                      url="${_variables.topdesk_url?no_esc}/tas/api/incidents",
                      escape=True, condition="ONLY_WHEN_PREVIOUS_SUCCEEDED")
-        step1.add_headers(*[entry.var for entry in form_Entry.entries if entry.type == "h"])
-        step1.add_parameters(*[entry.var for entry in form_Entry.entries if entry.type == "p"])
+        step1.add_headers(self.h_type, self.h_auth)
+        # step1.add_headers(*[entry.var for entry in form_Entry.entries if entry.type == "h" and entry.use.get() is True]) OBSOLETE FOR NOW
+        step1.add_parameters(*[entry.var for entry in form_Entry.entries if entry.type == "p" and entry.use.get() is True])
         incidentcreator.add_steps(step1.build())
-        incidentcreator.add_variables(*[entry.var for entry in form_Entry.entries if entry.type == "v"])
+        incidentcreator.add_variables(*[entry.var for entry in form_Entry.entries if entry.type == "v" and entry.use.get() is True])
         print(json.dumps(incidentcreator.build(), indent=2))
 
 
@@ -95,17 +96,20 @@ class form_Entry:
         self.check.grid(in_=master, row=form_Entry.row_num, column=2, pady=1)
 
         form_Entry.row_num += 1
+
         form_Entry.entries.append(self)
 
         self.name = name
         # self.var = ac.nvpair(name=self.name, value=self.entry.get())
 
     def compile(self):
-        if type == 'p' or 'P':
-            self.var = ac.parameter(name=self.name, value=self.entry.get())
+        if self.use.get() is True:
+            if type == 'p' or 'P':
+                self.var = ac.parameter(name=self.name, value=self.entry.get())
+            else:
+                self.var = ac.nvpair(name=self.name, value=self.entry.get())
         else:
-            self.var = ac.nvpair(name=self.name, value=self.entry.get())
-
+            print(f"Ignored {self}")
 
 '''
 incidentcreator = actionsequence(formatversion="2.6", exportdate=1568803440466,
